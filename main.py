@@ -1,6 +1,7 @@
 import pygame as pg
 
 from player import Player
+from world import TileMap
 from helper import res
 from settings import *
 
@@ -19,6 +20,8 @@ class Game:
     def new(self):
         """Initialize all the sprites."""
         player = Player(res/'sprites'/'player_sheet.png', (100, 100))
+        self.map = TileMap(res/'map'/'map.csv', res/'map'/'rpg_tileset.png')
+
         self.all_sprites = pg.sprite.Group()
         self.all_sprites.add(player)
 
