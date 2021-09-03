@@ -19,11 +19,9 @@ class Game:
 
     def new(self):
         """Initialize all the sprites."""
-        player = Player(res/'sprites'/'player_sheet.png', (100, 100))
-
-        self.all_sprites = pg.sprite.Group()
-        self.all_sprites.add(player)
-        self.map = TileMap(self, res/'map'/'map.csv', res/'map'/'rpg_tileset.png')
+        self.all_sprites = pg.sprite.LayeredUpdates()
+        player = Player(self, res/'sprites'/'player_sheet.png', (100, 100))
+        self.map = TileMap(self, res/'map'/'map.csv', res/'map'/'rpg_tileset.png', 16)
 
     def _events(self):
         """Check for input events."""

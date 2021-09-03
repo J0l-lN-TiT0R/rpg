@@ -2,6 +2,7 @@ import pygame as pg
 from pygame.math import Vector2
 
 from helper import SpriteSheet
+from settings import *
 
 
 class Player(pg.sprite.Sprite):
@@ -9,9 +10,10 @@ class Player(pg.sprite.Sprite):
 
     speed = 5
 
-    def __init__(self, sprite_sheet_path, pos):
+    def __init__(self, game, sprite_sheet_path, pos):
         """Initialize required variables."""
-        super().__init__()
+        self._layer = PLAYER_LAYER
+        super().__init__(game.all_sprites)
 
         sprite_sheet = SpriteSheet(sprite_sheet_path, 2)
         self.cycle_len = 4

@@ -8,10 +8,18 @@ from settings import *
 
 class TileMap:
     """Class for storing attributes related to the game map."""
-    def __init__(self, game, csv_path, image_path, spacing=0):
-        """Run the private functions to create a map."""
+    def __init__(self, game, csv_path, image_path, img_tile_size, spacing=0):
+        """Run the private functions to create a map.
+
+        Arguments:
+        game - object of the main game class
+        csv_path - path to a csv file containing map data
+        image_path - path to the tileset image
+        img_tile_size = size of a single tile in the given tileset
+        spacing = amount of space between tiles in the tileset image
+        """
         data_list = self._csv_to_list(csv_path)
-        image_list = self._parse_image(image_path, spacing)
+        image_list = self._parse_image(image_path, img_tile_size, spacing)
         self._load_tiles(game, data_list, image_list)
 
     def _csv_to_list(self, csv_path):
@@ -21,10 +29,17 @@ class TileMap:
             data = list(reader)
         return data
 
-    def _parse_image(self, image_path, spacing):
+    def _parse_image(self, image_path, img_tile_size, spacing):
         """Return a list of tile images from the given tileset."""
         lst = []
         image = pg.image.load(image_path).convert()
+
+        if img_tile_size != TILE_SIZE:
+            scale = TILE_SIZE // img_tile_size
+            spacing *= scale
+            current_size = image.get_size()
+            target_size = tuple(i * scale for i in current_size)
+            image = pg.transform.scale(image, target_size)
 
         width, height = image.get_size()
         for y in range(0, height, TILE_SIZE + spacing):
@@ -50,6 +65,7 @@ class Tile(pg.sprite.Sprite):
         x, y - row and column where the tile should be placed
         image - image object
         """
+        self._layer = GROUND_LAYER
         super().__init__(game.all_sprites)
         self.image = image
         self.rect = self.image.get_rect()
