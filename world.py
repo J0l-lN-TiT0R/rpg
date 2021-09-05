@@ -8,6 +8,16 @@ from settings import *
 
 class TileMap:
     """Class for storing attributes related to the game map."""
+
+    WALL_IDS = [1, 2, 3, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+                18, 19, 20, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33,
+                35, 36, 37, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
+                52, 53, 54, 58, 59, 60, 61, 52, 53, 54, 65, 66, 67,
+                69, 70, 75, 76, 77, 78, 79, 81, 82, 83, 84,
+                92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
+                107, 108, 109, 110, 11, 112, 113, 114, 115, 116, 227, 118,
+                119, 120, 121, 122, 123, 124, 125, 130, 131, 132, 133, 134, 135]
+
     def __init__(self, game, csv_path, image_path, img_tile_size, spacing=0):
         """Run the private functions to create a map.
 
@@ -23,7 +33,6 @@ class TileMap:
         self._load_tiles(game, data_list, image_list)
         self.width = len(data_list[0]) * TILE_SIZE
         self.height = len(data_list) * TILE_SIZE
-        # print(self.width, self.height)
 
     def _csv_to_list(self, csv_path):
         """Return a 2D list with data from the given csv file."""
@@ -55,12 +64,18 @@ class TileMap:
         """Create tile objects."""
         for i, row in enumerate(data_list):
             for j, index in enumerate(row):
-                Tile(game, j, i, image_list[int(index)])
+                # Easier to understand alternative
+                # if int(index) in TileMap.WALL_IDS:
+                #     collidable = True
+                # else:
+                #     collidable = False
+                collidable = int(index) in TileMap.WALL_IDS
+                Tile(game, j, i, image_list[int(index)], collidable)
 
 
 class Tile(pg.sprite.Sprite):
     """Class for storing attributes related to a single tile."""
-    def __init__(self, game, x, y, image):
+    def __init__(self, game, x, y, image, is_wall=False):
         """Create a tile sprite in the given position.
 
         Arguments:
@@ -68,8 +83,12 @@ class Tile(pg.sprite.Sprite):
         x, y - row and column where the tile should be placed
         image - image object
         """
+        if is_wall:
+            groups = game.all_sprites, game.walls
+        else:
+            groups = game.all_sprites
         self._layer = GROUND_LAYER
-        super().__init__(game.all_sprites)
+        super().__init__(groups)
         self.image = image
         self.rect = self.image.get_rect()
 
@@ -110,4 +129,3 @@ class Camera:
         x = max(x, -self.map_width + SCREEN_WIDTH)      # Right
         y = max(y, -self.map_height + SCREEN_HEIGHT)    # Bottom
         self.offset = (x, y)
-        # print(self.offset)

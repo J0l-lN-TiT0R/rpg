@@ -15,6 +15,7 @@ class Player(pg.sprite.Sprite):
         self._layer = PLAYER_LAYER
         super().__init__(game.all_sprites)
 
+        self.game = game
         self.cycle_len = 4
         sprite_sheet = SpriteSheet(sprite_sheet_path, 1.5)
         self._load_images(sprite_sheet)
@@ -52,7 +53,16 @@ class Player(pg.sprite.Sprite):
             self.velocity.x = 0
 
         self.velocity *= Player.speed
-        self.rect.center += self.velocity
+        if not self._will_collide():
+            self.rect.center += self.velocity
+
+    def _will_collide(self):
+        """Determine if the player will collide with the walls."""
+        target_rect = self.rect.move(self.velocity)
+        for tile in self.game.walls:
+            if target_rect.colliderect(tile.rect):
+                return True
+        return False
 
     def _load_images(self, sheet):
         """Load images from the sheet into separate lists."""

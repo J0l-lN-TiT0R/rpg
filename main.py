@@ -20,6 +20,7 @@ class Game:
     def new(self):
         """Initialize all the sprites."""
         self.all_sprites = pg.sprite.LayeredUpdates()
+        self.walls = pg.sprite.Group()
         self.player = Player(self, res/'sprites'/'player_sheet.png', (100, 100))
         self.map = TileMap(self, res/'map'/'map.csv', res/'map'/'rpg_tileset.png', 16)
         self.camera = Camera(self.map.width, self.map.height)
