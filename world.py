@@ -73,3 +73,29 @@ class Tile(pg.sprite.Sprite):
         self.rect.x = x * TILE_SIZE
         self.rect.y = y * TILE_SIZE
 
+
+class Camera:
+    """Class storing methods needed to enable scrolling map feature."""
+    def __init__(self):
+        """Initialize the offset variable.
+
+        offset - tuple, containing amount of pixels by which the map
+                 should be shifted along the x and y axis
+        """
+        self.offset = (0, 0)
+
+    def apply(self, entity):
+        """Move entity by the offset variable."""
+        return entity.rect.move(self.offset)
+
+    def update(self, target):
+        """Make the camera follow the target.
+
+        target - sprite for the camera to follow
+
+        Set the offset variable so that when applied to the map
+        the target would be centered on the screen.
+        """
+        x = -target.rect.x + SCREEN_WIDTH // 2
+        y = -target.rect.y + SCREEN_HEIGHT // 2
+        self.offset = (x, y)

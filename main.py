@@ -1,7 +1,7 @@
 import pygame as pg
 
 from player import Player
-from world import TileMap
+from world import TileMap, Camera
 from helper import res
 from settings import *
 
@@ -20,8 +20,9 @@ class Game:
     def new(self):
         """Initialize all the sprites."""
         self.all_sprites = pg.sprite.LayeredUpdates()
-        player = Player(self, res/'sprites'/'player_sheet.png', (100, 100))
+        self.player = Player(self, res/'sprites'/'player_sheet.png', (100, 100))
         self.map = TileMap(self, res/'map'/'map.csv', res/'map'/'rpg_tileset.png', 16)
+        self.camera = Camera()
 
     def _events(self):
         """Check for input events."""
@@ -33,11 +34,17 @@ class Game:
     def _update(self):
         """Update everything that's on the screen."""
         self.all_sprites.update()
+        self.camera.update(self.player)
 
     def _draw(self):
         """Draw every sprite."""
         self.screen.fill((255, 255, 255))
-        self.all_sprites.draw(self.screen)
+        # self.all_sprites.draw(self.screen)
+        # This does exactly the same as the line above
+        # for sprite in self.all_sprites:
+        #     self.screen.blit(sprite.image, sprite.rect)
+        for sprite in self.all_sprites:
+            self.screen.blit(sprite.image, self.camera.apply(sprite))
         pg.display.flip()
 
     def run(self):

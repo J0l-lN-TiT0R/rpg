@@ -15,8 +15,8 @@ class Player(pg.sprite.Sprite):
         self._layer = PLAYER_LAYER
         super().__init__(game.all_sprites)
 
-        sprite_sheet = SpriteSheet(sprite_sheet_path, 2)
         self.cycle_len = 4
+        sprite_sheet = SpriteSheet(sprite_sheet_path, 1.5)
         self._load_images(sprite_sheet)
         self.image = self.walk_right[0]
         self.rect = self.image.get_rect()

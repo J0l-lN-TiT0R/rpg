@@ -3,6 +3,8 @@ from pathlib import Path
 
 import pygame as pg
 
+from settings import *
+
 
 class SpriteSheet:
     """Class for storing and managing sprite sheets."""
