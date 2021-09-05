@@ -22,7 +22,7 @@ class Game:
         self.all_sprites = pg.sprite.LayeredUpdates()
         self.player = Player(self, res/'sprites'/'player_sheet.png', (100, 100))
         self.map = TileMap(self, res/'map'/'map.csv', res/'map'/'rpg_tileset.png', 16)
-        self.camera = Camera()
+        self.camera = Camera(self.map.width, self.map.height)
 
     def _events(self):
         """Check for input events."""
@@ -39,10 +39,6 @@ class Game:
     def _draw(self):
         """Draw every sprite."""
         self.screen.fill((255, 255, 255))
-        # self.all_sprites.draw(self.screen)
-        # This does exactly the same as the line above
-        # for sprite in self.all_sprites:
-        #     self.screen.blit(sprite.image, sprite.rect)
         for sprite in self.all_sprites:
             self.screen.blit(sprite.image, self.camera.apply(sprite))
         pg.display.flip()

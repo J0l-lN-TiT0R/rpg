@@ -21,6 +21,9 @@ class TileMap:
         data_list = self._csv_to_list(csv_path)
         image_list = self._parse_image(image_path, img_tile_size, spacing)
         self._load_tiles(game, data_list, image_list)
+        self.width = len(data_list[0]) * TILE_SIZE
+        self.height = len(data_list) * TILE_SIZE
+        # print(self.width, self.height)
 
     def _csv_to_list(self, csv_path):
         """Return a 2D list with data from the given csv file."""
@@ -76,13 +79,15 @@ class Tile(pg.sprite.Sprite):
 
 class Camera:
     """Class storing methods needed to enable scrolling map feature."""
-    def __init__(self):
+    def __init__(self, map_width, map_height):
         """Initialize the offset variable.
 
         offset - tuple, containing amount of pixels by which the map
                  should be shifted along the x and y axis
         """
         self.offset = (0, 0)
+        self.map_width = map_width
+        self.map_height = map_height
 
     def apply(self, entity):
         """Move entity by the offset variable."""
@@ -95,7 +100,14 @@ class Camera:
 
         Set the offset variable so that when applied to the map
         the target would be centered on the screen.
+        Stop the camera if the target reaches the end of the map.
         """
         x = -target.rect.x + SCREEN_WIDTH // 2
         y = -target.rect.y + SCREEN_HEIGHT // 2
+        # Camera constraints
+        x = min(x, 0)   # Left
+        y = min(y, 0)   # Top
+        x = max(x, -self.map_width + SCREEN_WIDTH)      # Right
+        y = max(y, -self.map_height + SCREEN_HEIGHT)    # Bottom
         self.offset = (x, y)
+        # print(self.offset)
