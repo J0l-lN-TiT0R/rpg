@@ -18,6 +18,8 @@ class TileMap:
                 107, 108, 109, 110, 11, 112, 113, 114, 115, 116, 227, 118,
                 119, 120, 121, 122, 123, 124, 125, 130, 131, 132, 133, 134, 135]
 
+    NPC_IDS = list(range(119, 126))
+
     def __init__(self, game, csv_path, image_path, img_tile_size, spacing=0):
         """Run the private functions to create a map.
 
@@ -29,8 +31,8 @@ class TileMap:
         spacing = amount of space between tiles in the tileset image
         """
         data_list = self._csv_to_list(csv_path)
-        image_list = self._parse_image(image_path, img_tile_size, spacing)
-        self._load_tiles(game, data_list, image_list)
+        self.image_list = self._parse_image(image_path, img_tile_size, spacing)
+        self._load_tiles(game, data_list, self.image_list)
         self.width = len(data_list[0]) * TILE_SIZE
         self.height = len(data_list) * TILE_SIZE
 
@@ -64,17 +66,13 @@ class TileMap:
         """Create tile objects."""
         for i, row in enumerate(data_list):
             for j, index in enumerate(row):
-                # Easier to understand alternative
-                # if int(index) in TileMap.WALL_IDS:
-                #     collidable = True
-                # else:
-                #     collidable = False
                 collidable = int(index) in TileMap.WALL_IDS
                 Tile(game, j, i, image_list[int(index)], collidable)
 
 
 class Tile(pg.sprite.Sprite):
     """Class for storing attributes related to a single tile."""
+
     def __init__(self, game, x, y, image, is_wall=False):
         """Create a tile sprite in the given position.
 
@@ -98,6 +96,7 @@ class Tile(pg.sprite.Sprite):
 
 class Camera:
     """Class storing methods needed to enable scrolling map feature."""
+
     def __init__(self, map_width, map_height):
         """Initialize the offset variable.
 
@@ -108,9 +107,9 @@ class Camera:
         self.map_width = map_width
         self.map_height = map_height
 
-    def apply(self, entity):
-        """Move entity by the offset variable."""
-        return entity.rect.move(self.offset)
+    def apply(self, entity_rect):
+        """Move passed rect by the offset variable."""
+        return entity_rect.move(self.offset)
 
     def update(self, target):
         """Make the camera follow the target.

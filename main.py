@@ -1,13 +1,15 @@
 import pygame as pg
 
 from player import Player
+from NPC import NPC
 from world import TileMap, Camera
 from helper import res
 from settings import *
 
 
 class Game:
-    """Generic class for holding the game attributes."""
+    """Generic class for holding game attributes."""
+
     def __init__(self):
         """Create the game window."""
         pg.init()
@@ -21,9 +23,10 @@ class Game:
         """Initialize all the sprites."""
         self.all_sprites = pg.sprite.LayeredUpdates()
         self.walls = pg.sprite.Group()
-        self.player = Player(self, res/'sprites'/'player_sheet.png', (100, 100))
         self.map = TileMap(self, res/'map'/'map.csv', res/'map'/'rpg_tileset.png', 16)
         self.camera = Camera(self.map.width, self.map.height)
+        self.player = Player(self, res/'sprites'/'player_sheet.png', (100, 100))
+        self.NPC = NPC(self, (200, 100), self.map.image_list[119])
 
     def _events(self):
         """Check for input events."""
@@ -39,10 +42,20 @@ class Game:
 
     def _draw(self):
         """Draw every sprite."""
-        self.screen.fill((255, 255, 255))
         for sprite in self.all_sprites:
-            self.screen.blit(sprite.image, self.camera.apply(sprite))
+            self.screen.blit(sprite.image, self.camera.apply(sprite.rect))
+#         self._draw_player_hitbox()
         pg.display.flip()
+
+    def _draw_player_hitbox(self):
+        """Display player hitbox. For debug purposes only."""
+        # Draw player rectangle
+        pg.draw.rect(self.screen, (0, 180, 0), self.camera.apply(self.player.rect))
+        # Draw the player
+        self.screen.blit(self.player.image, self.camera.apply(self.player.rect))
+        # Draw player physics body
+        pg.draw.rect(self.screen, (0, 0, 0), self.camera.apply(self.player.phys_body))
+
 
     def run(self):
         """The game loop."""

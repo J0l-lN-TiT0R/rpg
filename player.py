@@ -22,6 +22,10 @@ class Player(pg.sprite.Sprite):
         self.image = self.walk_right[0]
         self.rect = self.image.get_rect()
         self.rect.center = pos
+        self.phys_body = pg.Rect(self.rect.x, self.rect.y,
+                                 self.rect.w * 0.5, self.rect.h/4)
+        self.phys_body.centerx = self.rect.centerx
+        self.phys_body.bottom = self.rect.bottom - 5
 
         self.last_update = 0
         self.frame = 0
@@ -55,10 +59,11 @@ class Player(pg.sprite.Sprite):
         self.velocity *= Player.speed
         if not self._will_collide():
             self.rect.center += self.velocity
+            self.phys_body.center += self.velocity
 
     def _will_collide(self):
         """Determine if the player will collide with the walls."""
-        target_rect = self.rect.move(self.velocity)
+        target_rect = self.phys_body.move(self.velocity)
         for tile in self.game.walls:
             if target_rect.colliderect(tile.rect):
                 return True
