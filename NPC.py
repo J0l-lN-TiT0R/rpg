@@ -16,15 +16,13 @@ class NPC(pg.sprite.Sprite):
         self.image = image
         self.rect = self.image.get_rect(center=pos)
 
-        self.message = Message(game, (pos[0]-80, pos[1]-60),
+        self.message = Message(game, (pos[0], pos[1]-40),
                                'El. Psy. Kongroo.')
 
     def update(self):
         """Update current message."""
         # Show current message when colliding with the player
         if self.rect.colliderect(self.game.player):
-            if not self.message.groups():
-                self.message.add(self.game.all_sprites)
-                self.message.print()
+            self.message.print()
         elif self.message.groups():
-            self.message.kill()
+            self.message.reset()
