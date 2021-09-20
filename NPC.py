@@ -5,7 +5,7 @@ from settings import *
 
 
 class NPC(pg.sprite.Sprite):
-    """Class for creating Non-Player Charactes."""
+    """Class for creating Non-Player Characters."""
 
     def __init__(self, game, pos, image):
         """Initialize required variables."""
@@ -26,3 +26,7 @@ class NPC(pg.sprite.Sprite):
             self.message.print()
         elif self.message.groups():
             self.message.reset()
+
+        # Display a message at a specific point in time
+        if 2000 < pg.time.get_ticks() < 2020:
+            self.message.set_text('The time has come.')

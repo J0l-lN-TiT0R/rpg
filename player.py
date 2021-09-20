@@ -1,3 +1,5 @@
+import math
+
 import pygame as pg
 from pygame.math import Vector2
 
@@ -8,7 +10,7 @@ from settings import *
 class Player(pg.sprite.Sprite):
     """Class for storing all the attributes related to the player."""
 
-    speed = 5
+    speed = 200
 
     def __init__(self, game, sprite_sheet_path, pos):
         """Initialize required variables."""
@@ -56,7 +58,7 @@ class Player(pg.sprite.Sprite):
         if self.velocity.length() > 1:
             self.velocity.x = 0
 
-        self.velocity *= Player.speed
+        self.velocity *= math.ceil(Player.speed * self.game.dt)
         if not self._will_collide():
             self.rect.center += self.velocity
             self.phys_body.center += self.velocity
@@ -84,16 +86,9 @@ class Player(pg.sprite.Sprite):
             self.walk_right.append(sheet.get_image(x, h*2, w, h))
             self.walk_up.append(sheet.get_image(x, h*3, w, h))
 
-    def _animate(self, frame_len=100):
-        """Animate the player if moving.
-
-        frame_len - amount of time in ms during which one frame
-        of animation is displayed while moving.
-        """
-        now = pg.time.get_ticks()
-        if now - self.last_update > frame_len and self.velocity.length() > 0:
-            self.last_update = now
-
+    def _animate(self, speed=10):
+        """Animate the player if moving."""
+        if self.velocity.length() > 0:
             if self.velocity.y > 0:
                 self.animation_cycle = self.walk_down
             elif self.velocity.y < 0:
@@ -103,5 +98,6 @@ class Player(pg.sprite.Sprite):
             elif self.velocity.x < 0:
                 self.animation_cycle = self.walk_left
 
-            self.frame = (self.frame + 1) % self.cycle_len
-            self.image = self.animation_cycle[self.frame]
+            # Multiplying by dt to make animation consistent with the framerate
+            self.frame = (self.frame + self.game.dt * speed) % self.cycle_len
+            self.image = self.animation_cycle[int(self.frame)]

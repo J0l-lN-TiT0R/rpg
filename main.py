@@ -42,9 +42,9 @@ class Game:
 
     def _draw(self):
         """Draw every sprite."""
+        pg.display.set_caption(f'{GAME_TITLE} FPS: {int(self.clock.get_fps())}')
         for sprite in self.all_sprites:
             self.screen.blit(sprite.image, self.camera.apply(sprite.rect))
-#         self._draw_player_hitbox()
         pg.display.flip()
 
     def _draw_player_hitbox(self):
@@ -60,7 +60,7 @@ class Game:
     def run(self):
         """The game loop."""
         while self.running:
-            self.clock.tick(FPS)
+            self.dt = self.clock.tick(FPS) / 1000
             self._events()
             self._update()
             self._draw()
